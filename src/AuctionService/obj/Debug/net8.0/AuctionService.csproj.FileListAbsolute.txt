@@ -37,3 +37,4 @@ C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\b
 C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\System.CodeDom.dll
 C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\obj\Debug\net8.0\AuctionService.csproj.AssemblyReference.cache
 C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\obj\Debug\net8.0\AuctionService.csproj.CopyComplete
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\obj\Debug\net8.0\AuctionService.sourcelink.json

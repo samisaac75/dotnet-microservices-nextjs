@@ -62,14 +62,57 @@ public class AuctionsController : ControllerBase
         // Adding the mapped entity for auction to the database
         _context.Auctions.Add(auction);
 
-        // Save changes i required step
+        // Save changes is a required step
         //? if a zero is returned, that means nothing was saved in the database.
         var result = await _context.SaveChangesAsync() > 0;
 
         // If the data could not be saved, return a custom message.
-        if(!result) return BadRequest("Count not save chnages to the database!");
+        if(!result) return BadRequest("Could not save chnages to the database!");
 
-        // if data saving was successful, then rtuen the name of he created auction
-        return CreatedAtAction(nameof(GetAuctionById), new {auction.Id}, _mapper.Map<AuctionDto>(auctionDto));
+        // If data saving was successful, then return the name of he created auction. We are using en existing endpoint to get the details of the newly created auction
+        return CreatedAtAction(nameof(GetAuctionById), new {auction.Id}, _mapper.Map<AuctionDto>(auction));
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateAuction (Guid id, UpdateAuctionDto updateAuctionDto) {
+
+        var auction = await _context.Auctions.Include(x => x.Item)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if(auction == null) return NotFound();
+
+        //TODO: Check Seller name is same as the username
+
+        auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
+        auction.Item.Model = updateAuctionDto.Model ?? auction.Item.Model;
+        auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
+        auction.Item.Mileage = updateAuctionDto.Mileage ?? auction.Item.Mileage;
+        auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
+
+        var result = await _context.SaveChangesAsync() > 0;
+
+        if(result) return Ok();
+
+        return BadRequest("Could not save changes and update.");
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeletAuction(Guid id) {
+
+        var auction = await _context.Auctions.FindAsync(id);
+
+        if(auction == null) return NotFound();
+
+        //TODO: Check seller is same as username
+
+        _context.Auctions.Remove(auction);
+
+        var result = await _context.SaveChangesAsync() > 0;
+
+        if(!result) return BadRequest("Could not update database"); 
+
+        return Ok();
+
+    }
+
 }
