@@ -2,23 +2,23 @@
 
 **-- Check the SDK Files:**
 
-> blockquote dotnet --info
+> dotnet --info
 
 **-- Create new template:**
 
-> blockquote dotnet new list
+> dotnet new list
 
 **-- Create new Solution file:**
 
-> blockquote dotnet new sln
+> dotnet new sln
 
 **-- Create new Web API with an output directory:**
 
-> blockquote dotnet new webapi -o src/AuctionService
+> dotnet new webapi -o src/AuctionService
 
 **-- Add solution file to the src directory:**
 
-> blockquote dotnet sln add src/AuctionService/
+> dotnet sln add src/AuctionService/
 
 ---
 

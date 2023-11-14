@@ -2,6 +2,7 @@
 using AuctionService.DTOs;
 using AuctionService.Entites;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,19 +22,31 @@ public class AuctionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions() {
+    public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions(string date) {
+
+        var query = _context.Auctions.OrderBy(x => x.Item.Make).AsQueryable();
+
+        if(!string.IsNullOrEmpty(date)) {
+            query = query.Where(x => x.UpdatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0);
+        }
+
+
 
         //? *** Explanation of the return type: ***
             //? Task is an function that does a operation asnchronously.
             //? The Task returns an Action Result. Example Status 200 or 403 etc.
             //? Action Result returns a List of ActionDto
 
-        var auctions = await _context.Auctions
-            .Include(x => x.Item)
-            .OrderBy(x => x.Item.Make)
-            .ToListAsync();
+        return await query.ProjectTo<AuctionDto>(_mapper.ConfigurationProvider).ToListAsync();
 
-        return _mapper.Map<List<AuctionDto>>(auctions);
+        //? The code below was changed to the above while working with synchronous http requets
+
+        // var auctions = await _context.Auctions
+        //     .Include(x => x.Item)
+        //     .OrderBy(x => x.Item.Make)
+        //     .ToListAsync();
+
+        // return _mapper.Map<List<AuctionDto>>(auctions);
     }
 
     [HttpGet("{id}")]
