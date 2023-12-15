@@ -1,6 +1,8 @@
 
 // Creating a web application
+using AuctionService;
 using AuctionService.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,31 @@ builder.Services.AddDbContext<AuctionDbContext>(opt => {
 //? The Get Assemblies will specify where the mapping profiles are. 
 //? This provides the assemly this application is running in
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Adding Masstransit to the service
+builder.Services.AddMassTransit(x => {
+
+	x.AddEntityFrameworkOutbox<AuctionDbContext>(o => {
+
+		// Retry from outbox every 10 seconds
+		o.QueryDelay = TimeSpan.FromSeconds(10);
+
+		// We are letting the outbox know to use PostGres Database.
+		o.UsePostgres();
+
+		o.UseBusOutbox();
+
+	});
+
+	x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
+	x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
+
+	x.UsingRabbitMq((context, cfg) => {
+
+		//? Check the documentation for the ConfigureEndpoints method
+		cfg.ConfigureEndpoints(context);
+	});
+});
 
 // Building out Application
 var app = builder.Build();

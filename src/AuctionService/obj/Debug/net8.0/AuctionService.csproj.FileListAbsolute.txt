@@ -38,3 +38,10 @@ C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\b
 C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\obj\Debug\net8.0\AuctionService.csproj.AssemblyReference.cache
 C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\obj\Debug\net8.0\AuctionService.csproj.CopyComplete
 C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\obj\Debug\net8.0\AuctionService.sourcelink.json
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\MassTransit.dll
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\MassTransit.Abstractions.dll
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\MassTransit.RabbitMqTransport.dll
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\Contracts.dll
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\Contracts.pdb
+C:\Users\ivicliph\Documents\MicroServicesAndNextJS\Carsties\src\AuctionService\bin\Debug\net8.0\MassTransit.EntityFrameworkCoreIntegration.dll

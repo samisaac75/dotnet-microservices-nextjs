@@ -55,7 +55,7 @@ public class SearchController : ControllerBase
         }
 
         //! The get request fails if the page number and page size is not passed as a query string parameter
-        //! Think about whether or not to add defualt values for page number and size if the values are missing.
+        //! Think about whether or not to add default values for page number and size if the values are missing.
         // Setting the page number for the query
         query.PageNumber(searchParams.PageNumber);
 

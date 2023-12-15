@@ -28,7 +28,6 @@ public class DbInitializer
 
     if(items.Count > 0) await DB.SaveAsync(items);
 
-    
 
     //? The following code was replaced by the above code to learn synchronous requests between two microservices.
     // if (count == 0) {

@@ -3,6 +3,8 @@ using AuctionService.DTOs;
 using AuctionService.Entites;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Contracts;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,11 +16,17 @@ public class AuctionsController : ControllerBase
 {
     private readonly AuctionDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public AuctionsController(AuctionDbContext context, IMapper mapper)
+    //? We are injecting from MassTrisit to inject the message through IPublishEndpoint
+    public AuctionsController(AuctionDbContext context, 
+    IMapper mapper, 
+    IPublishEndpoint publishEndpoint)
+
     {
         _context = context;
         _mapper = mapper;
+        _publishEndpoint = publishEndpoint;
     }
 
     [HttpGet]
@@ -29,8 +37,6 @@ public class AuctionsController : ControllerBase
         if(!string.IsNullOrEmpty(date)) {
             query = query.Where(x => x.UpdatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0);
         }
-
-
 
         //? *** Explanation of the return type: ***
             //? Task is an function that does a operation asnchronously.
@@ -72,18 +78,33 @@ public class AuctionsController : ControllerBase
         //TODO: Add current user as seller
         auction.Seller = "test";
 
+        //* ***** LINE 1, 2 and 3 will be treated like a transaction. Either they all work or none of them work.
+
+        //? LINE 1
         // Adding the mapped entity for auction to the database
         _context.Auctions.Add(auction);
 
+        //! Line 1 and LINE 2 were move above LINE 3 after we added the code for the Outbox for RabbitMQ
+
+        //? LINE 2 - Where do use the IPublishEnpoint? Do we do it after we save chnages?
+        //* We have to wait until after we have the ID from te created auction.
+        var newAuction = _mapper.Map<AuctionDto>(auction);
+
+        //? LINE 3 - Using the IPublish Endpoint we can publish this new auction.
+        //* We are mapping the new auction into an AuctionCreated object.
+        //* We user _mapper.Map and then we pass n the new auction.
+        await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+
         // Save changes is a required step
-        //? if a zero is returned, that means nothing was saved in the database.
+        //? LINE 4 - if a zero is returned, that means nothing was saved in the database.
         var result = await _context.SaveChangesAsync() > 0;
+
 
         // If the data could not be saved, return a custom message.
         if(!result) return BadRequest("Could not save chnages to the database!");
 
         // If data saving was successful, then return the name of he created auction. We are using en existing endpoint to get the details of the newly created auction
-        return CreatedAtAction(nameof(GetAuctionById), new {auction.Id}, _mapper.Map<AuctionDto>(auction));
+        return CreatedAtAction(nameof(GetAuctionById), new {auction.Id}, newAuction);
     }
 
     [HttpPut("{id}")]
@@ -110,7 +131,7 @@ public class AuctionsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeletAuction(Guid id) {
+    public async Task<ActionResult> DeleteAuction(Guid id) {
 
         var auction = await _context.Auctions.FindAsync(id);
 
